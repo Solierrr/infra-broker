@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.3.0](https://github.com/Solierrr/infra-broker/compare/v0.2.0...v0.3.0) (2026-10-26)
+
+
+### Features
+
+* add rabbitmq stomp broker image and local compose ([#1](https://github.com/Solierrr/infra-broker/issues/1)) ([6211789](https://github.com/Solierrr/infra-broker/commit/6211789cb715183588deca5190a5a4110518d485))
+
 ## [0.2.0](https://github.com/Solierrr/generic-template/compare/v0.1.1...v0.2.0) (2026-10-02)
 
 
