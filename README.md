@@ -1,26 +1,15 @@
-# Finalidade do repositório
+# infra-broker
 
-Este repositório é o ponto de partida para novos serviços da Solaria. Ao criar um projeto a partir deste template, substitua os textos de exemplo, preencha as configurações da aplicação e mantenha a documentação alinhada ao que o serviço realmente oferece. Use `ARCHITECTURE.md` para registrar a organização do código, `RUNNING.md` para explicar como executar a aplicação e `DEPLOYMENT.md` para descrever seu deploy. O diretório `http/` reúne requisições de exemplo para chamar a API localmente durante o desenvolvimento.
+Broker de mensagens do Solaria: 
+RabbitMQ 4 com o plugin STOMP, usado pelo **api-messenger** como broker externo do WebSocket. 
+O relay STOMP do Spring repassa os tópicos `/topic/**` para cá, e o RabbitMQ entrega cada evento às
+sessões conectadas em **qualquer pod** do api-messenger.
 
-## Estrutura inicial
+## Portas
 
-- `http/README.md`: convenções do cliente HTTP local.
-- `http/bruno.json`: manifesto da coleção Bruno.
-- `http/environments/local.bru`: ambiente local da API, com credenciais vazias.
-- `http/`: requisições `.bru` agrupadas em diretórios em inglês (`health/`, `authentication/`, `tasks/`).
-- `.dockerignore`: exclui segredos e arquivos locais do contexto de build da imagem.
-- `entrypoint.sh`: busca configuração no Infisical em runtime quando Universal Auth está configurado; sem essas credenciais, inicia diretamente o comando da imagem.
-- `.env.example`: nomes e valores de exemplo das variáveis necessárias; não inclua credenciais reais.
-- `Dockerfile`: ponto de partida para empacotar a aplicação.
+| Porta | Uso |
+|---|---|
+| 61613 | STOMP, a única que o api-messenger usa |
+| 15672 | Management UI, só para diagnóstico |
+| 5672 | AMQP, aberto pelo RabbitMQ mas sem uso pelos serviços |
 
-## Cliente HTTP local
-
-Abra `http/` como uma coleção Bruno e edite os arquivos `.bru` para incluir as rotas reais do serviço. Consulte [`http/README.md`](./http/README.md) para instruções e o template canônico em [`docs-warehouse/templates/http/`](https://github.com/Solierrr/docs-warehouse/tree/main/templates/http).
-
-Antes de disponibilizar o repositório, substitua as descrições de exemplo e revise os links e comandos para refletir a stack escolhida.
-
-## Inicialização da imagem no Render
-
-O `entrypoint.sh` recebe o comando da aplicação definido no `CMD` do `Dockerfile`. Se `INFISICAL_CLIENT_ID` e `INFISICAL_CLIENT_SECRET` estiverem presentes em runtime, ele autentica via Universal Auth e inicia esse comando sob `infisical run`; caso contrário, executa-o diretamente com as variáveis já injetadas pela plataforma. O projeto padrão é o workspace Solaria e o ambiente padrão é `qa`; ambos podem ser substituídos por `INFISICAL_PROJECT_ID` e `INFISICAL_ENV`.
-
-Para ativar o caminho Infisical, instale o CLI na imagem runtime e configure as credenciais como variáveis de runtime do Render, nunca como argumentos ou variáveis de build. Quando o Render já fornecer os segredos diretamente, não configure as credenciais Universal Auth e o launcher apenas inicia a aplicação. Use um launcher específico quando o serviço precisar preparar arquivos ou fazer outra transformação antes de iniciar.
