@@ -6,7 +6,6 @@
 *.iml
 *.log
 README.md
-http/
 
 # Segredos e arquivos de ambiente locais
 .env
@@ -28,3 +27,4 @@ __pycache__/
 .pytest_cache/
 .mypy_cache/
 .ruff_cache/
+local/
